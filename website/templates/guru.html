@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Data Guru</h2>
+
+<div class="row">
+    {% for g in guru %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow text-center">
+            {% if g.foto %}
+            <img src="{{ g.foto.url }}" class="card-img-top" style="height:300px; object-fit:cover;">
+            {% else %}
+            <img src="https://via.placeholder.com/300x300" class="card-img-top">
+            {% endif %}
+            <div class="card-body">
+                <h5>{{ g.nama }}</h5>
+                <p>{{ g.jabatan }}</p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Data guru belum tersedia.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

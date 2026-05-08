@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Profil Sekolah</h2>
+
+{% if profil %}
+<div class="card shadow p-4">
+    <h3>{{ profil.nama_sekolah }}</h3>
+    <p><strong>Alamat:</strong> {{ profil.alamat }}</p>
+
+    <h5 class="mt-4">Visi</h5>
+    <p>{{ profil.visi }}</p>
+
+    <h5 class="mt-4">Misi</h5>
+    <p>{{ profil.misi }}</p>
+
+    <h5 class="mt-4">Deskripsi</h5>
+    <p>{{ profil.deskripsi }}</p>
+</div>
+{% else %}
+<p>Profil sekolah belum tersedia.</p>
+{% endif %}
+
+{% endblock %}

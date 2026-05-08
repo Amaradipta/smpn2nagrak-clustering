@@ -1,0 +1,188 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+
+<h2 class="mb-4">Hasil Analisis Risiko Akademik</h2>
+
+<!-- DBI -->
+<div class="card card-modern p-3 mb-4 text-center">
+    <h5 class="mb-1">Evaluasi Clustering</h5>
+    <p class="mb-0">
+        Nilai Davies-Bouldin Index (DBI): 
+        <strong>{{ dbi }}</strong>
+    </p>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="row mb-4">
+
+    <div class="col-md-3">
+        <div class="card card-modern p-3 text-center">
+            <h6 class="text-muted">Total Siswa</h6>
+            <h3>{{ total_siswa }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-modern p-3 text-center border-start border-4 border-success">
+            <h6 class="text-muted">Tidak Berisiko</h6>
+            <h3 class="text-success">{{ tidak_berisiko }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-modern p-3 text-center border-start border-4 border-warning">
+            <h6 class="text-muted">Berisiko Sedang</h6>
+            <h3 class="text-warning">{{ risiko_sedang }}</h3>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-modern p-3 text-center border-start border-4 border-danger">
+            <h6 class="text-muted">Berisiko Tinggi</h6>
+            <h3 class="text-danger">{{ risiko_tinggi }}</h3>
+        </div>
+    </div>
+
+</div>
+
+<!-- INFO BATCH -->
+<div class="card card-modern p-3 mb-4">
+    <small class="text-muted">
+        Tahun Ajaran: <strong>{{ analisis.tahun_ajaran }}</strong> |
+        Semester: <strong>{{ analisis.semester }}</strong> |
+        Tanggal Analisis: <strong>{{ analisis.tanggal_analisis }}</strong>
+    </small>
+</div>
+
+<!-- FILTER -->
+<div class="mb-4">
+    <form method="get">
+        <label class="form-label">Filter Kelas</label>
+        <select name="kelas" onchange="this.form.submit()" class="form-select" style="max-width:250px;">
+            <option value="">Semua Kelas</option>
+            {% for k in daftar_kelas %}
+                <option value="{{ k }}" {% if kelas_filter == k %}selected{% endif %}>{{ k }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+<!-- GRAFIK -->
+<div class="card card-modern p-4 mb-4">
+    <h5 class="mb-3">Distribusi Risiko</h5>
+    <canvas id="chartRisiko"></canvas>
+</div>
+
+<!-- STATISTIK CLUSTER -->
+<div class="card card-modern mb-4">
+    <div class="card-header bg-white">
+        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#statistikCluster">
+            Lihat Statistik Cluster
+        </button>
+    </div>
+
+    <div id="statistikCluster" class="collapse">
+        <div class="card-body">
+            <table class="table table-bordered align-middle">
+                <thead>
+                    <tr>
+                        <th>Kelas</th>
+                        <th>Cluster</th>
+                        <th>Risiko</th>
+                        <th>Jumlah</th>
+                        <th>Rata Nilai</th>
+                        <th>Rata Kehadiran</th>
+                        <th>Rata Ekstra</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in statistik_cluster %}
+                    <tr>
+                        <td>{{ s.kelas }}</td>
+                        <td>{{ s.cluster }}</td>
+                        <td><strong>{{ s.risiko }}</strong></td>
+                        <td>{{ s.jumlah }}</td>
+                        <td>{{ s.rata_nilai|floatformat:2 }}</td>
+                        <td>{{ s.rata_kehadiran|floatformat:2 }}</td>
+                        <td>{{ s.rata_ekstra|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- DETAIL SISWA -->
+<div class="card card-modern mb-4">
+    <div class="card-header bg-white">
+        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#detailSiswa">
+            Lihat Detail Siswa
+        </button>
+    </div>
+
+    <div id="detailSiswa" class="collapse">
+        <div class="card-body">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>NIS</th>
+                        <th>Nama</th>
+                        <th>Kelas</th>
+                        <th>Nilai Rata-rata</th>
+                        <th>Kehadiran (%)</th>
+                        <th>Ekstrakurikuler</th>
+                        <th>Risiko</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in data %}
+                    <tr>
+                        <td>{{ s.nis }}</td>
+                        <td>{{ s.nama }}</td>
+                        <td>{{ s.kelas }}</td>
+                        <td>{{ s.nilai_rata_rata }}</td>
+                        <td>{{ s.persentase_kehadiran }}</td>
+                        <td>{{ s.skor_ekstrakurikuler }}</td>
+                        <td><strong>{{ s.risiko }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- CHART SCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const ctx = document.getElementById('chartRisiko');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ label_chart|safe }},
+            datasets: [{
+                label: 'Jumlah Siswa',
+                data: {{ data_chart|safe }},
+                backgroundColor: {{ warna_chart|safe }},
+                borderRadius: 8
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }
+            },
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

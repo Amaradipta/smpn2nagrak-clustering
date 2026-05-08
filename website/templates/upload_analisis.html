@@ -1,0 +1,32 @@
+{% extends 'dashboard_base.html' %}
+
+{% block content %}
+
+<h2>Upload Data Analisis Risiko Akademik</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label>Tahun Ajaran</label>
+        <input type="text" name="tahun_ajaran" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Semester</label>
+        <select name="semester" class="form-control">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>File Excel</label>
+        <input type="file" name="file" class="form-control" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Proses Analisis</button>
+
+</form>
+
+{% endblock %}
