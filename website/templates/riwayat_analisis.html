@@ -1,0 +1,142 @@
+{% extends 'dashboard_base.html' %}
+
+{% block content %}
+
+<div class="mb-4">
+
+    <h2 class="mb-1">
+        Riwayat Analisis
+    </h2>
+
+    <p class="text-muted">
+        Daftar seluruh hasil analisis risiko akademik siswa.
+    </p>
+
+</div>
+
+<!-- NOTIFIKASI -->
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div
+            class="alert alert-{{ message.tags }} alert-dismissible fade show"
+            role="alert"
+        >
+
+            {{ message }}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+            ></button>
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+<!-- TABEL -->
+<div class="card-modern p-4">
+
+    <div class="table-responsive">
+
+        <table class="table align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th width="80">
+                        No
+                    </th>
+
+                    <th>
+                        Tahun Ajaran
+                    </th>
+
+                    <th>
+                        Semester
+                    </th>
+
+                    <th>
+                        Jenjang
+                    </th>
+
+                    <th width="180">
+                        Aksi
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in analisis %}
+
+                <tr>
+
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td>
+                        {{ item.tahun_ajaran }}
+                    </td>
+
+                    <td>
+                        Semester {{ item.semester }}
+                    </td>
+
+                    <td>
+
+                        <span class="badge bg-primary">
+
+                            Kelas {{ item.jenjang }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="{% url 'hasil_analisis' item.id %}"
+                            class="btn btn-primary btn-sm"
+                        >
+                            Lihat Hasil
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="text-center text-muted py-4"
+                    >
+
+                        Belum ada data analisis.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

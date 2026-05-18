@@ -1,0 +1,296 @@
+{% extends 'dashboard_base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="mb-1">
+            Data Siswa
+        </h2>
+
+        <p class="text-muted mb-0">
+            Data hasil clustering risiko akademik siswa.
+        </p>
+
+    </div>
+
+    <!-- EXPORT -->
+    <a
+    href="/analisis/export-excel/?kelas={{ kelas_selected|default:'' }}&risiko={{ risiko_selected|default:'' }}&search={{ search|default:'' }}"
+        class="btn btn-success"
+    >
+
+        <i class="bi bi-file-earmark-excel-fill"></i>
+
+        Export Excel
+
+    </a>
+
+</div>
+
+<!-- FILTER -->
+<div class="card-modern p-4 mb-4">
+
+    <form method="GET">
+
+        <div class="row g-3">
+
+            <!-- SEARCH -->
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Cari Nama Siswa
+                </label>
+
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Masukkan nama siswa..."
+                    value="{% if search and search != 'None' %}{{ search }}{% endif %}"
+                >
+
+            </div>
+
+            <!-- FILTER KELAS -->
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Filter Kelas
+                </label>
+
+                <select
+                    name="kelas"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Semua Kelas
+                    </option>
+
+                    {% for k in daftar_kelas %}
+
+                    <option
+                        value="{{ k }}"
+                        {% if kelas_selected == k %}selected{% endif %}
+                    >
+
+                        {{ k }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- FILTER RISIKO -->
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Filter Risiko
+                </label>
+
+                <select
+                    name="risiko"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Semua Risiko
+                    </option>
+
+                    {% for r in daftar_risiko %}
+
+                    <option
+                        value="{{ r }}"
+                        {% if risiko_selected == r %}selected{% endif %}
+                    >
+
+                        {{ r }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- BUTTON -->
+            <div class="col-md-2 d-flex align-items-end">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100"
+                >
+
+                    <i class="bi bi-search"></i>
+
+                    Filter
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<!-- TABLE -->
+<div class="card-modern p-4">
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+                    <th>No Induk</th>
+                    <th>Nama</th>
+                    <th>Kelas</th>
+                    <th>AVG</th>
+                    <th>ABSEN</th>
+                    <th>EKSTRAKURIKULER</th>
+                    <th>Cluster</th>
+                    <th>Risiko</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in data %}
+
+                <tr>
+
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td>
+                        {{ item.nis }}
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="/analisis/siswa/{{ item.nis }}/"
+                            class="text-decoration-none fw-semibold"
+                        >
+                    
+                            {{ item.nama }}
+                    
+                        </a>
+                    
+                    </td>
+
+                    <td>
+                        {{ item.kelas }}
+                    </td>
+
+                    <td>
+                        {{ item.nilai_rata_rata|floatformat:2 }}
+                    </td>
+
+                    <td>
+                        {{ item.persentase_kehadiran|floatformat:2 }}
+                    </td>
+
+                    <td>
+                        {{ item.skor_ekstrakurikuler|floatformat:2 }}
+                    </td>
+
+                    <td>
+
+                        <span class="badge bg-secondary">
+
+                            Cluster {{ item.cluster }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        {% if item.risiko == 'Tidak Berisiko' %}
+
+                            <span class="badge bg-success">
+
+                                {{ item.risiko }}
+
+                            </span>
+
+                        {% elif item.risiko == 'Rendah' %}
+
+                            <span class="badge bg-info text-dark">
+
+                                {{ item.risiko }}
+
+                            </span>
+
+                        {% elif item.risiko == 'Sedang' %}
+
+                            <span class="badge bg-warning text-dark">
+
+                                {{ item.risiko }}
+
+                            </span>
+
+                        {% elif item.risiko == 'Tinggi' %}
+
+                            <span class="badge bg-danger">
+
+                                {{ item.risiko }}
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+
+                                {{ item.risiko }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="text-center text-muted py-4"
+                    >
+
+                        Data siswa tidak ditemukan.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -28,16 +28,37 @@ class Guru(models.Model):
         return self.nama
 
 class Analisis(models.Model):
-    tahun_ajaran = models.CharField(max_length=20)
+
+    tahun_ajaran = models.CharField(
+        max_length=20
+    )
+
     semester = models.IntegerField()
-    tanggal_analisis = models.DateTimeField(auto_now_add=True)
+
+    jenjang = models.CharField(
+        max_length=10
+    )
+
+    tanggal_analisis = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    dbi = models.FloatField(
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = "Batch Analisis"
         verbose_name_plural = "Batch Analisis"
 
     def __str__(self):
-        return f"{self.tahun_ajaran} - Semester {self.semester}"
+
+        return (
+            f"Kelas {self.jenjang} - "
+            f"{self.tahun_ajaran} "
+            f"Semester {self.semester}"
+        )
 
 
 class HasilAnalisis(models.Model):

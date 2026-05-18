@@ -1,0 +1,302 @@
+{% extends 'dashboard_base.html' %}
+
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="mb-4">
+
+    <h2 class="mb-1">
+        Detail Performa Siswa
+    </h2>
+
+    <p class="text-muted">
+        Monitoring perkembangan akademik siswa antar semester
+    </p>
+
+</div>
+
+<!-- IDENTITAS -->
+<div class="card-modern p-4 mb-4">
+
+    <div class="row">
+
+        <div class="col-md-4">
+
+            <small class="text-muted">
+                NIS
+            </small>
+
+            <h5>
+                {{ siswa_terbaru.nis }}
+            </h5>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <small class="text-muted">
+                Nama
+            </small>
+
+            <h5>
+                {{ siswa_terbaru.nama }}
+            </h5>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <small class="text-muted">
+                Kelas Terakhir
+            </small>
+
+            <h5>
+                {{ siswa_terbaru.kelas }}
+            </h5>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- INSIGHT -->
+{% if insight %}
+
+<div class="alert alert-info mb-4">
+
+    {{ insight }}
+
+</div>
+
+{% endif %}
+
+<!-- GRAFIK AVG & ABSEN -->
+<div class="card-modern p-4 mb-4">
+
+    <h4 class="mb-4">
+        Grafik Perkembangan Akademik
+    </h4>
+
+    <canvas id="chartPerforma" height="100"></canvas>
+
+</div>
+
+<!-- GRAFIK EKSTRA -->
+<div class="card-modern p-4 mb-4">
+
+    <h4 class="mb-4">
+        Grafik Keaktifan Ekstrakurikuler
+    </h4>
+
+    <canvas id="chartEkstra" height="100"></canvas>
+
+</div>
+
+<!-- RIWAYAT -->
+<div class="card-modern p-4">
+
+    <h4 class="mb-4">
+        Riwayat Semester
+    </h4>
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered align-middle">
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th>Tahun Ajaran</th>
+                    <th>Semester</th>
+                    <th>AVG</th>
+                    <th>ABSEN</th>
+                    <th>EKSTRAKURIKULER</th>
+                    <th>Risiko</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in siswa %}
+
+                <tr>
+
+                    <td>
+                        {{ item.analisis.tahun_ajaran }}
+                    </td>
+
+                    <td>
+                        {{ item.analisis.semester }}
+                    </td>
+
+                    <td>
+                        {{ item.nilai_rata_rata }}
+                    </td>
+
+                    <td>
+                        {{ item.persentase_kehadiran }}
+                    </td>
+
+                    <td>
+                        {{ item.skor_ekstrakurikuler }}
+                    </td>
+
+                    <td>
+
+                        {% if item.risiko == 'Tidak Berisiko' %}
+
+                        <span class="badge bg-success">
+                            {{ item.risiko }}
+                        </span>
+
+                        {% elif item.risiko == 'Rendah' %}
+
+                        <span
+                            class="badge text-dark"
+                            style="background-color: #84cc16;"
+                        >
+                            {{ item.risiko }}
+                        </span>
+
+                        {% elif item.risiko == 'Sedang' %}
+
+                        <span class="badge bg-warning text-dark">
+                            {{ item.risiko }}
+                        </span>
+
+                        {% elif item.risiko == 'Tinggi' %}
+
+                        <span class="badge bg-danger">
+                            {{ item.risiko }}
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- CHART AVG & ABSEN -->
+<script>
+
+const ctx = document.getElementById('chartPerforma');
+
+new Chart(ctx, {
+
+    type: 'line',
+
+    data: {
+
+        labels: {{ label_semester|safe }},
+
+        datasets: [
+
+            {
+
+                label: 'AVG',
+
+                data: {{ data_avg|safe }},
+
+                borderWidth: 3,
+
+                tension: 0.3
+
+            },
+
+            {
+
+                label: 'ABSEN',
+
+                data: {{ data_kehadiran|safe }},
+
+                borderWidth: 3,
+
+                tension: 0.3
+
+            }
+
+        ]
+
+    },
+
+    options: {
+
+        responsive: true
+
+    }
+
+});
+
+</script>
+
+<!-- CHART EKSTRA -->
+<script>
+
+const ctxEkstra = document.getElementById('chartEkstra');
+
+new Chart(ctxEkstra, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: {{ label_semester|safe }},
+
+        datasets: [
+
+            {
+
+                label: 'EKSTRAKURIKULER',
+
+                data: {{ data_ekstra|safe }},
+
+                borderWidth: 1
+
+            }
+
+        ]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true,
+
+                ticks: {
+
+                    precision: 0
+
+                }
+
+            }
+
+        }
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

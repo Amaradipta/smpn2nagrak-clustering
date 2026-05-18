@@ -1,80 +1,448 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard - SMPN 2 Nagrak</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="id">
 
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Dashboard | Sistem Analisis Risiko Akademik
+    </title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    >
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
+
+        * {
+            box-sizing: border-box;
         }
+
+        body {
+
+            font-family: 'Inter', sans-serif;
+
+            background-color: #f1f5f9;
+
+            margin: 0;
+
+            color: #0f172a;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================== */
 
         .sidebar {
-            height: 100vh;
-            background-color: #1e293b;
-            color: white;
+
             position: fixed;
-            width: 240px;
+
             top: 0;
+
             left: 0;
+
+            width: 260px;
+
+            height: 100vh;
+
+            background: linear-gradient(
+                180deg,
+                #0f172a 0%,
+                #1e293b 100%
+            );
+
+            color: white;
+
+            padding: 24px 0;
+
+            z-index: 1000;
         }
 
-        .sidebar h4 {
-            padding: 20px;
+        .sidebar-brand {
+
+            padding: 0 24px 24px;
+
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+
+            margin-bottom: 20px;
+        }
+
+        .sidebar-brand h4 {
+
+            margin: 0;
+
+            font-weight: 700;
+
+            font-size: 20px;
+        }
+
+        .sidebar-brand small {
+
+            color: #94a3b8;
+        }
+
+        .sidebar-menu {
+
+            padding: 0 12px;
+        }
+
+        .sidebar-menu a {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 12px 16px;
+
+            margin-bottom: 8px;
+
+            border-radius: 12px;
+
+            text-decoration: none;
+
+            color: #cbd5e1;
+
+            transition: 0.25s;
+        }
+
+        .sidebar-menu a:hover {
+
+            background-color: rgba(255,255,255,0.08);
+
+            color: white;
+        }
+
+        .sidebar-menu a.active {
+
+            background-color: #2563eb;
+
+            color: white;
+
             font-weight: 600;
         }
 
-        .sidebar a {
-            display: block;
-            padding: 12px 20px;
-            color: #cbd5e1;
-            text-decoration: none;
-            transition: 0.2s;
+        .sidebar-menu i {
+
+            font-size: 18px;
         }
 
-        .sidebar a:hover {
-            background-color: #334155;
-            color: white;
-        }
+        /* =========================
+           CONTENT
+        ========================== */
 
-        .content {
-            margin-left: 240px;
-            padding: 30px;
+        .main-content {
+
+            margin-left: 260px;
+
             min-height: 100vh;
         }
 
-        .card-modern {
-            border: none;
-            border-radius: 14px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+        /* =========================
+           TOPBAR
+        ========================== */
+
+        .topbar {
+
+            background-color: white;
+
+            padding: 18px 32px;
+
+            border-bottom: 1px solid #e2e8f0;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 999;
         }
+
+        .topbar h5 {
+
+            margin: 0;
+
+            font-weight: 600;
+        }
+
+        .topbar small {
+
+            color: #64748b;
+        }
+
+        /* =========================
+           PAGE CONTENT
+        ========================== */
+
+        .page-content {
+
+            padding: 32px;
+        }
+
+        /* =========================
+           CARD
+        ========================== */
+
+        .card-modern {
+
+            border: none;
+
+            border-radius: 18px;
+
+            background-color: white;
+
+            box-shadow:
+                0 4px 10px rgba(15, 23, 42, 0.04),
+                0 10px 25px rgba(15, 23, 42, 0.06);
+        }
+
+        /* =========================
+           TABLE
+        ========================== */
+
+        .table {
+
+            margin-bottom: 0;
+        }
+
+        .table thead {
+
+            background-color: #f8fafc;
+        }
+
+        .table th {
+
+            font-weight: 600;
+
+            color: #334155;
+        }
+
+        /* =========================
+           BADGE
+        ========================== */
+
+        .badge {
+
+            padding: 8px 12px;
+
+            border-radius: 10px;
+
+            font-weight: 500;
+        }
+
+        /* =========================
+           BUTTON
+        ========================== */
+
+        .btn {
+
+            border-radius: 10px;
+
+            font-weight: 500;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media (max-width: 991px) {
+
+            .sidebar {
+
+                width: 100%;
+
+                height: auto;
+
+                position: relative;
+            }
+
+            .main-content {
+
+                margin-left: 0;
+            }
+
+            .topbar {
+
+                padding: 18px;
+            }
+
+            .page-content {
+
+                padding: 18px;
+            }
+
+        }
+
     </style>
+
 </head>
+
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-    <h4>Dashboard</h4>
-    <a href="/analisis/upload/">Upload Analisis</a>
-    <a href="#">Riwayat Analisis</a>
-    <a href="/">Kembali ke Website</a>
+
+    <div class="sidebar-brand">
+
+        <h4>
+            SMPN 2 Nagrak
+        </h4>
+
+        <small>
+            Sistem Analisis Risiko Akademik
+        </small>
+
+    </div>
+
+    <div class="sidebar-menu">
+
+        <!-- WEBSITE -->
+        <a
+            href="/"
+            class="{% if request.path == '/' %}active{% endif %}"
+        >
+
+            <i class="bi bi-house-door-fill"></i>
+
+            <span>
+                Website Utama
+            </span>
+
+        </a>
+
+        <!-- UPLOAD -->
+        <a
+            href="/analisis/upload/"
+            class="{% if '/analisis/upload/' in request.path %}active{% endif %}"
+        >
+
+            <i class="bi bi-cloud-upload-fill"></i>
+
+            <span>
+                Upload Analisis
+            </span>
+
+        </a>
+
+        <!-- RIWAYAT -->
+        <a
+            href="/analisis/riwayat/"
+            class="{% if '/analisis/riwayat/' in request.path %}active{% endif %}"
+        >
+
+            <i class="bi bi-bar-chart-fill"></i>
+
+            <span>
+                Hasil Analisis
+            </span>
+
+        </a>
+
+        <!-- DATA SISWA -->
+        <a
+            href="/analisis/data-siswa/"
+            class="{% if '/analisis/data-siswa/' in request.path %}active{% endif %}"
+        >
+
+            <i class="bi bi-people-fill"></i>
+
+            <span>
+                Data Siswa
+            </span>
+
+        </a>
+
+    </div>
+
 </div>
 
-<div class="content">
-    {% block content %}
-    {% endblock %}
+<!-- MAIN -->
+<div class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+
+        <div>
+
+            <h5>
+                Dashboard Analisis Risiko Akademik
+            </h5>
+
+            <small>
+                Agglomerative Hierarchical Clustering
+            </small>
+
+        </div>
+
+        <div>
+
+            <span class="text-muted">
+                SMPN 2 Nagrak
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- CONTENT -->
+    <div class="page-content">
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+            <div class="alert alert-success alert-dismissible fade show mb-4">
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
 </div>
 
-<!-- Bootstrap JS (WAJIB untuk collapse, dropdown, dll) -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>

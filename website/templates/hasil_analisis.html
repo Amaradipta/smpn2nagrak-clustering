@@ -1,188 +1,819 @@
 {% extends 'dashboard_base.html' %}
+
 {% block content %}
 
-<h2 class="mb-4">Hasil Analisis Risiko Akademik</h2>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Hasil Analisis Risiko Akademik
+        </h2>
+
+        <div class="mb-4">
+
+            <span class="badge bg-primary fs-6">
+        
+                Tahun Ajaran:
+                {{ analisis.tahun_ajaran }}
+        
+            </span>
+        
+            <span class="badge bg-success fs-6">
+        
+                Semester:
+                {{ analisis.semester }}
+        
+            </span>
+        
+            <span class="badge bg-dark fs-6">
+        
+                Jenjang:
+                Kelas {{ analisis.jenjang }}
+        
+            </span>
+        
+        </div>
+
+        <p class="text-muted mb-0">
+            Hasil clustering siswa menggunakan metode Agglomerative Hierarchical Clustering
+        </p>
+    </div>
+
+</div>
+
+<!-- INSIGHT DASHBOARD -->
+{% if insight_dashboard %}
+
+<div class="alert alert-info mb-4">
+
+    <strong>
+        Insight Analisis:
+    </strong>
+
+    {{ insight_dashboard }}
+
+</div>
+
+{% endif %}
 
 <!-- DBI -->
-<div class="card card-modern p-3 mb-4 text-center">
-    <h5 class="mb-1">Evaluasi Clustering</h5>
-    <p class="mb-0">
-        Nilai Davies-Bouldin Index (DBI): 
-        <strong>{{ dbi }}</strong>
+<div class="card card-modern shadow-sm border-0 p-4 mb-4 text-center">
+
+    <h5 class="mb-2">
+        Evaluasi Clustering
+    </h5>
+
+    <p class="mb-0 text-muted">
+        Nilai Davies-Bouldin Index (DBI)
     </p>
+
+    <h2 class="fw-bold mt-2 text-primary">
+        {{ dbi }}
+    </h2>
+
+    <small class="text-muted">
+        Semakin kecil nilai DBI maka kualitas cluster semakin baik.
+    </small>
+
 </div>
 
-<!-- SUMMARY CARDS -->
+<!-- SUMMARY -->
 <div class="row mb-4">
 
-    <div class="col-md-3">
-        <div class="card card-modern p-3 text-center">
-            <h6 class="text-muted">Total Siswa</h6>
-            <h3>{{ total_siswa }}</h3>
+    <!-- TOTAL -->
+    <div class="col-md-3 mb-3">
+
+        <div class="card card-modern shadow-sm border-0 p-4 text-center h-100">
+
+            <h6 class="text-muted">
+                Total Siswa
+            </h6>
+
+            <h2 class="fw-bold">
+                {{ total_siswa }}
+            </h2>
+
         </div>
+
     </div>
 
-    <div class="col-md-3">
-        <div class="card card-modern p-3 text-center border-start border-4 border-success">
-            <h6 class="text-muted">Tidak Berisiko</h6>
-            <h3 class="text-success">{{ tidak_berisiko }}</h3>
+    <!-- TIDAK BERISIKO -->
+    <div class="col-md-3 mb-3">
+
+        <div class="card card-modern shadow-sm border-0 border-start border-5 border-success p-4 text-center h-100">
+
+            <h6 class="text-muted">
+                Tidak Berisiko
+            </h6>
+
+            <h2 class="fw-bold text-success">
+                {{ tidak_berisiko }}
+            </h2>
+
         </div>
+
     </div>
 
-    <div class="col-md-3">
-        <div class="card card-modern p-3 text-center border-start border-4 border-warning">
-            <h6 class="text-muted">Berisiko Sedang</h6>
-            <h3 class="text-warning">{{ risiko_sedang }}</h3>
+    <!-- RISIKO RENDAH -->
+    <div class="col-md-3 mb-3">
+
+        <div class="card card-modern shadow-sm border-0 border-start border-5 border-info p-4 text-center h-100">
+
+            <h6 class="text-muted">
+                Risiko Rendah
+            </h6>
+
+            <h2 class="fw-bold text-info">
+                {{ risiko_rendah }}
+            </h2>
+
         </div>
+
     </div>
 
-    <div class="col-md-3">
-        <div class="card card-modern p-3 text-center border-start border-4 border-danger">
-            <h6 class="text-muted">Berisiko Tinggi</h6>
-            <h3 class="text-danger">{{ risiko_tinggi }}</h3>
+    <!-- RISIKO SEDANG -->
+    <div class="col-md-3 mb-3">
+
+        <div class="card card-modern shadow-sm border-0 border-start border-5 border-warning p-4 text-center h-100">
+
+            <h6 class="text-muted">
+                Risiko Sedang
+            </h6>
+
+            <h2 class="fw-bold text-warning">
+                {{ risiko_sedang }}
+            </h2>
+
         </div>
+
     </div>
 
 </div>
 
-<!-- INFO BATCH -->
-<div class="card card-modern p-3 mb-4">
-    <small class="text-muted">
-        Tahun Ajaran: <strong>{{ analisis.tahun_ajaran }}</strong> |
-        Semester: <strong>{{ analisis.semester }}</strong> |
-        Tanggal Analisis: <strong>{{ analisis.tanggal_analisis }}</strong>
-    </small>
+<!-- RISIKO TINGGI -->
+<div class="row mb-4">
+
+    <div class="col-md-3 mb-3">
+
+        <div class="card card-modern shadow-sm border-0 border-start border-5 border-danger p-4 text-center h-100">
+
+            <h6 class="text-muted">
+                Risiko Tinggi
+            </h6>
+
+            <h2 class="fw-bold text-danger">
+                {{ risiko_tinggi }}
+            </h2>
+
+        </div>
+
+    </div>
+
 </div>
+
+    <!-- INFO ANALISIS -->
+    <div class="card card-modern shadow-sm border-0 p-3 mb-4">
+
+        <div class="row">
+
+            <div class="col-md-4">
+
+                <small class="text-muted">
+                    Tahun Ajaran
+                </small>
+
+                <div class="fw-semibold">
+                    {{ analisis.tahun_ajaran }}
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <small class="text-muted">
+                    Semester
+                </small>
+
+                <div class="fw-semibold">
+                    {{ analisis.semester }}
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <small class="text-muted">
+                    Tanggal Analisis
+                </small>
+
+                <div class="fw-semibold">
+                    {{ analisis.tanggal_analisis }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 <!-- FILTER -->
-<div class="mb-4">
+<div class="card card-modern shadow-sm border-0 p-4 mb-4">
+
     <form method="get">
-        <label class="form-label">Filter Kelas</label>
-        <select name="kelas" onchange="this.form.submit()" class="form-select" style="max-width:250px;">
-            <option value="">Semua Kelas</option>
-            {% for k in daftar_kelas %}
-                <option value="{{ k }}" {% if kelas_filter == k %}selected{% endif %}>{{ k }}</option>
-            {% endfor %}
-        </select>
+
+        <div class="row align-items-end">
+
+            <div class="col-md-4">
+
+                <label class="form-label fw-semibold">
+                    Filter Kelas
+                </label>
+
+                <select
+                    name="kelas"
+                    onchange="this.form.submit()"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Semua Kelas
+                    </option>
+
+                    {% for k in daftar_kelas %}
+
+                    <option
+                        value="{{ k }}"
+                        {% if kelas_filter == k %}selected{% endif %}
+                    >
+
+                        {{ k }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+        </div>
+
     </form>
+
 </div>
 
-<!-- GRAFIK -->
-<div class="card card-modern p-4 mb-4">
-    <h5 class="mb-3">Distribusi Risiko</h5>
-    <canvas id="chartRisiko"></canvas>
+<!-- GRAFIK DISTRIBUSI -->
+<div class="card card-modern shadow-sm border-0 p-4 mb-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h5 class="mb-1">
+                Distribusi Risiko Akademik
+            </h5>
+
+            <small class="text-muted">
+                Visualisasi jumlah siswa berdasarkan kategori risiko akademik
+            </small>
+
+        </div>
+
+    </div>
+
+    <canvas id="chartRisiko" height="100"></canvas>
+
+</div>
+
+<!-- SCATTER PLOT -->
+<div class="card card-modern shadow-sm border-0 p-4 mb-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h5 class="mb-1">
+                Scatter Plot Clustering
+            </h5>
+
+            <small class="text-muted">
+                Visualisasi distribusi siswa berdasarkan nilai rata-rata dan kehadiran
+            </small>
+
+        </div>
+
+    </div>
+
+    <canvas id="scatterChart" height="100"></canvas>
+    
+    <div class="mt-4">
+
+        <div class="row text-center">
+    
+            <div class="col-md-3">
+    
+                <span class="badge bg-success">
+                    Tidak Berisiko
+                </span>
+    
+            </div>
+    
+            <div class="col-md-3">
+    
+                <span
+                    class="badge text-dark"
+                    style="background-color: #84cc16;"
+                >
+                    Risiko Rendah
+                </span>
+    
+            </div>
+    
+            <div class="col-md-3">
+    
+                <span class="badge bg-warning text-dark">
+                    Risiko Sedang
+                </span>
+    
+            </div>
+    
+            <div class="col-md-3">
+    
+                <span class="badge bg-danger">
+                    Risiko Tinggi
+                </span>
+    
+            </div>
+    
+        </div>
+    
+        <small class="text-muted d-block mt-3">
+    
+            Sumbu X = AVG |
+            Sumbu Y = ABSEN |
+            Ukuran Bubble = EKSTRAKURIKULER
+    
+        </small>
+    
+    </div>
+
+</div>
+
+<!-- DENDROGRAM -->
+<div class="card-modern p-4 mb-4">
+
+    <h4 class="mb-3">
+        Dendrogram Hierarchical Clustering
+    </h4>
+
+    <p class="text-muted mb-4">
+        Visualisasi proses penggabungan cluster menggunakan metode Agglomerative Hierarchical Clustering.
+    </p>
+
+    <div class="text-center">
+
+        <img
+            src="data:image/png;base64,{{ grafik_dendrogram }}"
+            class="img-fluid rounded"
+        >
+
+    </div>
+
 </div>
 
 <!-- STATISTIK CLUSTER -->
-<div class="card card-modern mb-4">
-    <div class="card-header bg-white">
-        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#statistikCluster">
-            Lihat Statistik Cluster
-        </button>
+<div class="card card-modern shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-white border-0 p-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <h5 class="mb-1">
+                    Statistik Cluster
+                </h5>
+
+                <small class="text-muted">
+                    Ringkasan karakteristik setiap cluster
+                </small>
+
+            </div>
+
+            <button
+                class="btn btn-outline-secondary btn-sm"
+                data-bs-toggle="collapse"
+                data-bs-target="#statistikCluster"
+            >
+
+                Tampilkan
+
+            </button>
+
+        </div>
+
     </div>
 
-    <div id="statistikCluster" class="collapse">
+    <div id="statistikCluster" class="collapse show">
+
         <div class="card-body">
-            <table class="table table-bordered align-middle">
-                <thead>
-                    <tr>
-                        <th>Kelas</th>
-                        <th>Cluster</th>
-                        <th>Risiko</th>
-                        <th>Jumlah</th>
-                        <th>Rata Nilai</th>
-                        <th>Rata Kehadiran</th>
-                        <th>Rata Ekstra</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for s in statistik_cluster %}
-                    <tr>
-                        <td>{{ s.kelas }}</td>
-                        <td>{{ s.cluster }}</td>
-                        <td><strong>{{ s.risiko }}</strong></td>
-                        <td>{{ s.jumlah }}</td>
-                        <td>{{ s.rata_nilai|floatformat:2 }}</td>
-                        <td>{{ s.rata_kehadiran|floatformat:2 }}</td>
-                        <td>{{ s.rata_ekstra|floatformat:2 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Kelas</th>
+                            <th>Cluster</th>
+                            <th>Risiko</th>
+                            <th>Jumlah</th>
+                            <th>Rata Nilai</th>
+                            <th>Rata Kehadiran</th>
+                            <th>Rata Ekstrakurikuler</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for s in statistik_cluster %}
+
+                        <tr>
+
+                            <td>{{ s.kelas }}</td>
+
+                            <td>
+                                Cluster {{ s.cluster }}
+                            </td>
+
+                            <td>
+
+                                {% if s.risiko == 'Tidak Berisiko' %}
+
+                                <span class="badge bg-success">
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% elif s.risiko == 'Rendah' %}
+
+                                <span
+                                    class="badge text-dark"
+                                    style="background-color: #84cc16;"
+                                >
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% elif s.risiko == 'Sedang' %}
+
+                                <span class="badge bg-warning text-dark">
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% elif s.risiko == 'Tinggi' %}
+
+                                <span class="badge bg-danger">
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-secondary">
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>{{ s.jumlah }}</td>
+
+                            <td>{{ s.rata_nilai|floatformat:2 }}</td>
+
+                            <td>{{ s.rata_kehadiran|floatformat:2 }}</td>
+
+                            <td>{{ s.rata_ekstra|floatformat:2 }}</td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
         </div>
+
     </div>
+
 </div>
 
 <!-- DETAIL SISWA -->
-<div class="card card-modern mb-4">
-    <div class="card-header bg-white">
-        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#detailSiswa">
-            Lihat Detail Siswa
-        </button>
+<div class="card card-modern shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-white border-0 p-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <h5 class="mb-1">
+                    Detail Hasil Clustering
+                </h5>
+
+                <small class="text-muted">
+                    Data hasil pengelompokan siswa
+                </small>
+
+            </div>
+
+            <button
+                class="btn btn-outline-secondary btn-sm"
+                data-bs-toggle="collapse"
+                data-bs-target="#detailSiswa"
+            >
+
+                Tampilkan
+
+            </button>
+
+        </div>
+
     </div>
 
-    <div id="detailSiswa" class="collapse">
+    <div id="detailSiswa" class="collapse show">
+
         <div class="card-body">
-            <table class="table table-striped align-middle">
-                <thead>
-                    <tr>
-                        <th>NIS</th>
-                        <th>Nama</th>
-                        <th>Kelas</th>
-                        <th>Nilai Rata-rata</th>
-                        <th>Kehadiran (%)</th>
-                        <th>Ekstrakurikuler</th>
-                        <th>Risiko</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for s in data %}
-                    <tr>
-                        <td>{{ s.nis }}</td>
-                        <td>{{ s.nama }}</td>
-                        <td>{{ s.kelas }}</td>
-                        <td>{{ s.nilai_rata_rata }}</td>
-                        <td>{{ s.persentase_kehadiran }}</td>
-                        <td>{{ s.skor_ekstrakurikuler }}</td>
-                        <td><strong>{{ s.risiko }}</strong></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+            <div class="table-responsive">
+
+                <table class="table table-striped align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>NIS</th>
+                            <th>Nama</th>
+                            <th>Kelas</th>
+                            <th>Nilai Rata-rata</th>
+                            <th>Kehadiran (%)</th>
+                            <th>Ekstrakurikuler</th>
+                            <th>Risiko</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for s in data %}
+
+                        <tr>
+
+                            <td>{{ s.nis }}</td>
+                            <td>{{ s.nama }}</td>
+                            <td>{{ s.kelas }}</td>
+                            <td>{{ s.nilai_rata_rata }}</td>
+                            <td>{{ s.persentase_kehadiran }}</td>
+                            <td>{{ s.skor_ekstrakurikuler }}</td>
+
+                            <td>
+
+                                {% if s.risiko == 'Tidak Berisiko' %}
+
+                                <span class="badge bg-success">
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% elif s.risiko == 'Rendah' %}
+
+                                <span
+                                    class="badge text-dark"
+                                    style="background-color: #84cc16;"
+                                >
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% elif s.risiko == 'Sedang' %}
+
+                                <span class="badge bg-warning text-dark">
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% elif s.risiko == 'Tinggi' %}
+
+                                <span class="badge bg-danger">
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-secondary">
+                                    {{ s.risiko }}
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
         </div>
+
     </div>
+
 </div>
 
-<!-- CHART SCRIPT -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<!-- BAR CHART -->
 <script>
-    const ctx = document.getElementById('chartRisiko');
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: {{ label_chart|safe }},
-            datasets: [{
-                label: 'Jumlah Siswa',
-                data: {{ data_chart|safe }},
-                backgroundColor: {{ warna_chart|safe }},
-                borderRadius: 8
-            }]
-        },
-        options: {
-            plugins: {
-                legend: { display: false }
-            },
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { precision: 0 }
-                }
+const ctx = document.getElementById('chartRisiko');
+
+new Chart(ctx, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: {{ label_chart|safe }},
+
+        datasets: [{
+
+            label: 'Jumlah Siswa',
+
+            data: {{ data_chart|safe }},
+
+            backgroundColor: {{ warna_chart|safe }},
+
+            borderRadius: 10
+
+        }]
+
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+                display: false
             }
+
+        },
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true,
+
+                ticks: {
+                    precision: 0
+                }
+
+            }
+
         }
-    });
+
+    }
+
+});
+
 </script>
+
+<!-- SCATTER PLOT -->
+<script>
+
+    const scatterData = {{ scatter_data|safe }};
+    
+    const scatterCtx = document.getElementById('scatterChart');
+    
+    new Chart(scatterCtx, {
+    
+        type: 'bubble',
+    
+        data: {
+    
+            datasets: [{
+    
+                label: 'Distribusi Siswa',
+    
+                data: scatterData,
+    
+                parsing: {
+    
+                    xAxisKey: 'x',
+    
+                    yAxisKey: 'y'
+    
+                },
+    
+                backgroundColor: scatterData.map(
+                    item => item.backgroundColor
+                ),
+    
+                borderWidth: 1
+    
+            }]
+    
+        },
+    
+        options: {
+    
+            responsive: true,
+    
+            plugins: {
+    
+                legend: {
+    
+                    display: false
+    
+                },
+    
+                tooltip: {
+    
+                    callbacks: {
+    
+                        label: function(context) {
+    
+                            const item = context.raw;
+    
+                            return [
+    
+                                'Nama: ' + item.label,
+    
+                                'Kelas: ' + item.kelas,
+    
+                                'Cluster: ' + item.cluster,
+    
+                                'Risiko: ' + item.risiko,
+    
+                                'AVG: ' + item.x,
+    
+                                'ABSEN: ' + item.y,
+    
+                                'EKSTRAKURIKULER: ' + item.ekstra
+    
+                            ];
+    
+                        }
+    
+                    }
+    
+                }
+    
+            },
+    
+            scales: {
+    
+                x: {
+    
+                    title: {
+    
+                        display: true,
+    
+                        text: 'Nilai Rata-Rata (AVG)'
+    
+                    }
+    
+                },
+    
+                y: {
+    
+                    title: {
+    
+                        display: true,
+    
+                        text: 'Persentase Kehadiran'
+    
+                    }
+    
+                }
+    
+            }
+    
+        }
+    
+    });
+    
+    </script>
 
 {% endblock %}

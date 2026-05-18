@@ -2,42 +2,254 @@
 
 {% block content %}
 
-<div class="text-center">
-    <h1>Selamat Datang di Website Resmi</h1>
-    <h3>SMPN 2 Nagrak</h3>
-    <p class="mt-3">
-        Website ini merupakan sistem informasi sekolah berbasis web
-        yang terintegrasi dengan analisis risiko akademik siswa.
-    </p>
-</div>
+<!-- HERO -->
+<section class="py-5">
 
-<div class="row mt-5">
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body text-center">
-                <h5>Fasilitas Sekolah</h5>
-                <p>Informasi fasilitas unggulan sekolah.</p>
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+
+                <span class="badge bg-primary mb-3 px-3 py-2">
+                    Sistem Analisis Risiko Akademik
+                </span>
+
+                <h1 class="fw-bold display-5 mb-3">
+                    Website Resmi SMPN 2 Nagrak
+                </h1>
+
+                <p class="lead text-muted mb-4">
+                    Sistem informasi sekolah berbasis web yang terintegrasi
+                    dengan analisis risiko akademik siswa menggunakan metode
+                    Agglomerative Hierarchical Clustering.
+                </p>
+
+                <div class="d-flex gap-3 flex-wrap">
+
+                    <a
+                        href="/analisis/upload/"
+                        class="btn btn-primary btn-lg px-4"
+                    >
+                        Mulai Analisis
+                    </a>
+
+                    <a
+                        href="/profil/"
+                        class="btn btn-outline-secondary btn-lg px-4"
+                    >
+                        Profil Sekolah
+                    </a>
+
+                </div>
+
             </div>
+
+            <div class="col-lg-6 text-center mt-5 mt-lg-0">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png"
+                    alt="Ilustrasi Sekolah"
+                    class="img-fluid"
+                    style="max-width: 420px;"
+                >
+
+            </div>
+
         </div>
+
     </div>
 
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body text-center">
-                <h5>Prestasi Siswa</h5>
-                <p>Data prestasi akademik dan non akademik.</p>
-            </div>
+</section>
+
+<!-- FITUR -->
+<section class="py-5 bg-light">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold">
+                Fitur Sistem
+            </h2>
+
+            <p class="text-muted">
+                Sistem dirancang untuk membantu sekolah melakukan analisis
+                dan visualisasi risiko akademik siswa secara otomatis.
+            </p>
+
         </div>
+
+        <div class="row g-4">
+
+            <!-- FITUR 1 -->
+            <div class="col-md-4">
+
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+
+                    <div class="card-body text-center p-4">
+
+                        <div class="mb-3">
+
+                            <i class="bi bi-cloud-upload-fill text-primary"
+                               style="font-size: 48px;"></i>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+                            Upload Data Excel
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Sistem dapat membaca data nilai siswa secara otomatis
+                            dari file Excel multi-sheet.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- FITUR 2 -->
+            <div class="col-md-4">
+
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+
+                    <div class="card-body text-center p-4">
+
+                        <div class="mb-3">
+
+                            <i class="bi bi-diagram-3-fill text-success"
+                               style="font-size: 48px;"></i>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+                            Clustering Otomatis
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Pengelompokan siswa dilakukan menggunakan metode
+                            Agglomerative Hierarchical Clustering.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- FITUR 3 -->
+            <div class="col-md-4">
+
+                <div class="card border-0 shadow-sm h-100 rounded-4">
+
+                    <div class="card-body text-center p-4">
+
+                        <div class="mb-3">
+
+                            <i class="bi bi-bar-chart-fill text-warning"
+                               style="font-size: 48px;"></i>
+
+                        </div>
+
+                        <h5 class="fw-semibold">
+                            Visualisasi Analisis
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Hasil clustering ditampilkan dalam bentuk grafik,
+                            statistik, dan distribusi risiko akademik.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body text-center">
-                <h5>Analisis Risiko Akademik</h5>
-                <p>Fitur machine learning untuk deteksi dini.</p>
+</section>
+
+<!-- TENTANG -->
+<section class="py-5">
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png"
+                    class="img-fluid"
+                    alt="Tentang Sistem"
+                    style="max-width: 420px;"
+                >
+
             </div>
+
+            <div class="col-lg-6 mt-4 mt-lg-0">
+
+                <h2 class="fw-bold mb-3">
+                    Tentang Sistem
+                </h2>
+
+                <p class="text-muted">
+                    Sistem ini dikembangkan sebagai media implementasi
+                    penelitian skripsi mengenai analisis risiko akademik siswa
+                    berbasis data mining pada SMPN 2 Nagrak.
+                </p>
+
+                <p class="text-muted">
+                    Sistem membantu pihak sekolah dalam melakukan deteksi dini
+                    terhadap siswa yang memerlukan perhatian akademik melalui
+                    pengelompokan berdasarkan nilai akademik, kehadiran,
+                    dan keaktifan ekstrakurikuler.
+                </p>
+
+                <a
+                    href="/analisis/upload/"
+                    class="btn btn-primary mt-2"
+                >
+                    Coba Sistem
+                </a>
+
+            </div>
+
         </div>
+
     </div>
-</div>
+
+</section>
+
+<!-- CTA -->
+<section class="py-5 bg-primary text-white">
+
+    <div class="container text-center">
+
+        <h2 class="fw-bold mb-3">
+            Analisis Risiko Akademik Secara Cepat dan Otomatis
+        </h2>
+
+        <p class="mb-4">
+            Upload data siswa dan dapatkan hasil clustering lengkap
+            beserta visualisasi risiko akademik.
+        </p>
+
+        <a
+            href="/analisis/upload/"
+            class="btn btn-light btn-lg px-4"
+        >
+            Mulai Sekarang
+        </a>
+
+    </div>
+
+</section>
 
 {% endblock %}

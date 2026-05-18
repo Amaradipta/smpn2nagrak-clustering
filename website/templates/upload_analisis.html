@@ -2,31 +2,245 @@
 
 {% block content %}
 
-<h2>Upload Data Analisis Risiko Akademik</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+    <div>
 
-    <div class="mb-3">
-        <label>Tahun Ajaran</label>
-        <input type="text" name="tahun_ajaran" class="form-control" required>
+        <h2 class="mb-1">
+            Upload Data Analisis Risiko Akademik
+        </h2>
+
+        <p class="text-muted mb-0">
+            Upload file Excel data siswa untuk melakukan proses clustering risiko akademik secara otomatis.
+        </p>
+
     </div>
 
-    <div class="mb-3">
-        <label>Semester</label>
-        <select name="semester" class="form-control">
-            <option value="1">1</option>
-            <option value="2">2</option>
-        </select>
+</div>
+
+<!-- INFORMASI -->
+<div class="card card-modern shadow-sm border-0 p-4 mb-4">
+
+    <h5 class="mb-3">
+        Informasi Format File
+    </h5>
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <ul class="mb-0">
+
+                <li>
+                    File harus berformat <strong>.xlsx</strong>
+                </li>
+
+                <li>
+                    Setiap sheet mewakili satu kelas
+                </li>
+
+                <li>
+                    Nama sheet digunakan sebagai nama kelas
+                </li>
+
+                <li>
+                    Data siswa harus berada pada baris utama tabel
+                </li>
+
+            </ul>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <ul class="mb-0">
+
+                <li>
+                    Kolom nilai mata pelajaran harus lengkap
+                </li>
+
+                <li>
+                    Sistem akan menghitung nilai rata-rata otomatis
+                </li>
+
+                <li>
+                    Sistem melakukan clustering otomatis menggunakan AHC
+                </li>
+
+                <li>
+                    Sistem akan menghasilkan visualisasi dan nilai DBI
+                </li>
+
+            </ul>
+
+        </div>
+
     </div>
 
-    <div class="mb-3">
-        <label>File Excel</label>
-        <input type="file" name="file" class="form-control" required>
+</div>
+
+<!-- FORM -->
+<div class="card card-modern shadow-sm border-0">
+
+    <div class="card-body p-4">
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="row">
+
+                <!-- TAHUN AJARAN -->
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Tahun Ajaran
+                    </label>
+
+                    <input
+                        type="text"
+                        name="tahun_ajaran"
+                        class="form-control"
+                        placeholder="Contoh: 2025/2026"
+                        required
+                    >
+
+                </div>
+
+                <!-- SEMESTER -->
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Semester
+                    </label>
+
+                    <select
+                        name="semester"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            -- Pilih Semester --
+                        </option>
+
+                        <option value="1">
+                            Semester Ganjil
+                        </option>
+
+                        <option value="2">
+                            Semester Genap
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- JENJANG -->
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Jenjang
+                    </label>
+
+                    <select
+                        name="jenjang"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            -- Pilih Jenjang --
+                        </option>
+
+                        <option value="7">
+                            Kelas 7
+                        </option>
+
+                        <option value="8">
+                            Kelas 8
+                        </option>
+
+                        <option value="9">
+                            Kelas 9
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <!-- FILE -->
+            <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                    File Excel
+                </label>
+
+                <input
+                    type="file"
+                    name="file"
+                    class="form-control"
+                    id="fileInput"
+                    accept=".xlsx,.xls"
+                    required
+                >
+
+                <small class="text-muted">
+                    Upload file Excel data nilai siswa.
+                </small>
+
+            </div>
+
+            <!-- PREVIEW FILE -->
+            <div
+                id="filePreview"
+                class="alert alert-secondary d-none"
+            >
+                <strong>File dipilih:</strong>
+                <span id="fileName"></span>
+            </div>
+
+            <!-- BUTTON -->
+            <div class="d-flex justify-content-end">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary px-4"
+                >
+                    Proses Analisis
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
 
-    <button type="submit" class="btn btn-primary">Proses Analisis</button>
+</div>
 
-</form>
+<!-- SCRIPT -->
+<script>
+
+    const fileInput = document.getElementById('fileInput');
+
+    const filePreview = document.getElementById('filePreview');
+
+    const fileName = document.getElementById('fileName');
+
+    fileInput.addEventListener('change', function () {
+
+        if (this.files.length > 0) {
+
+            filePreview.classList.remove('d-none');
+
+            fileName.textContent = this.files[0].name;
+
+        }
+
+    });
+
+</script>
 
 {% endblock %}
