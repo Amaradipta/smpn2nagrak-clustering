@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&x+k!j4lzx6=4jag&07q5@+bl1=^+-*$9p1vsw8h3-v&7&3xk8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = True
 
 ALLOWED_HOSTS = [
-    "127.0.0.1",
+    "github-cg3hze.helipod.app",
     "localhost",
-    ".onrender.com",
+    "127.0.0.1",
 ]
 
 
