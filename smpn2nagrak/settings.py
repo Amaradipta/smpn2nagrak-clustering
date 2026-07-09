@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-&x+k!j4lzx6=4jag&07q5@+bl1=^+-*$9p1vsw8h3-v&7&3xk8
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "github-cg3hze.helipod.app",
+    "smpn2nagrak-clustering.helipod.app",
     "localhost",
     "127.0.0.1",
 ]
