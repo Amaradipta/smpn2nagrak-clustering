@@ -7,10 +7,15 @@ from .models import ProfilSekolah, Guru, Analisis, HasilAnalisis
 
 import pandas as pd
 import json
+import numpy as np
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import davies_bouldin_score
+from sklearn.metrics import (
+    davies_bouldin_score,
+    silhouette_score,
+    calinski_harabasz_score
+)
 
 import matplotlib
 matplotlib.use('Agg')
@@ -175,8 +180,13 @@ def upload_analisis(request):
         df['AVG'] = (
             df[mapel]
             .mean(axis=1)
-            .round(2)
         )
+
+        print(df[['AVG','ABSEN']].describe())
+
+        print(df['EKSTRAKURIKULER'].value_counts())
+
+        print(df[['AVG','ABSEN','EKSTRAKURIKULER']].corr())
 
         # =========================
         # KOLOM CLUSTER & RISIKO
@@ -186,186 +196,139 @@ def upload_analisis(request):
 
         df['risiko'] = None
 
-        dbi_list = []
-
         # =========================
-        # PROSES PER KELAS
+        # FITUR CLUSTERING
         # =========================
 
-        for kelas in df['Kelas'].unique():
-
-            df_kelas = df[
-                df['Kelas'] == kelas
-            ].copy()
-
-            # =========================
-            # MINIMAL DATA
-            # =========================
-
-            if len(df_kelas) < 4:
-
-                df.loc[
-                    df['Kelas'] == kelas,
-                    'cluster'
-                ] = -1
-
-                df.loc[
-                    df['Kelas'] == kelas,
-                    'risiko'
-                ] = 'Data Tidak Cukup'
-
-                continue
-
-            # =========================
-            # FITUR CLUSTERING
-            # =========================
-
-            fitur = df_kelas[[
+        fitur = df[
+            [
                 'AVG',
-                'ABSEN',
-                'EKSTRAKURIKULER'
-            ]]
+                'ABSEN'
+            ]
+        ]
 
-            # =========================
-            # NORMALISASI
-            # =========================
+        # =========================
+        # NORMALISASI
+        # =========================
 
-            scaler = MinMaxScaler()
+        scaler = MinMaxScaler()
 
-            fitur_scaled = scaler.fit_transform(
-                fitur
-            )
+        fitur_scaled = scaler.fit_transform(
+            fitur
+        )
 
-            # =========================
-            # AGGLOMERATIVE CLUSTERING
-            # =========================
+        # =========================
+        # AGGLOMERATIVE CLUSTERING
+        # =========================
 
-            model = AgglomerativeClustering(
-                n_clusters=4,
-                linkage='ward'
-            )
+        model = AgglomerativeClustering(
+            n_clusters=4,
+            linkage='ward'
+        )
 
-            cluster = model.fit_predict(
-                fitur_scaled
-            )
+        cluster = model.fit_predict(
+            fitur_scaled
+        )
 
-            # =========================
-            # HITUNG DBI
-            # =========================
+        df['cluster'] = cluster
 
-            dbi = davies_bouldin_score(
-                fitur_scaled,
-                cluster
-            )
+        # =========================
+        # EVALUASI CLUSTERING
+        # =========================
 
-            dbi_list.append(dbi)
+        silhouette = silhouette_score(
+            fitur_scaled,
+            cluster
+        )
 
-            # =========================
-            # SIMPAN CLUSTER
-            # =========================
+        dbi = davies_bouldin_score(
+            fitur_scaled,
+            cluster
+        )
 
-            df.loc[
-                df['Kelas'] == kelas,
-                'cluster'
-            ] = cluster
+        chi = calinski_harabasz_score(
+            fitur_scaled,
+            cluster
+        )
 
-            # =========================
-            # DATA NORMALISASI
-            # =========================
+        # =========================
+        # SKOR CLUSTER
+        # =========================
 
-            df_scaled = pd.DataFrame(
-                fitur_scaled,
-                columns=[
+        df_scaled = pd.DataFrame(
+            fitur_scaled,
+            columns=[
+                'AVG',
+                'ABSEN'
+            ]
+        )
+
+        df_scaled['cluster'] = cluster
+
+        df_scaled['SKOR_CLUSTER'] = (
+            df_scaled[
+                [
                     'AVG',
-                    'ABSEN',
-                    'EKSTRAKURIKULER'
+                    'ABSEN'
                 ]
-            )
-
-            df_scaled['cluster'] = cluster
-
-            # =========================
-            # SKOR CLUSTER
-            # =========================
-
-            df_scaled['SKOR_CLUSTER'] = (
-                df_scaled[
-                    [
-                        'AVG',
-                        'ABSEN',
-                        'EKSTRAKURIKULER'
-                    ]
-                ].mean(axis=1)
-            )
-
-            # =========================
-            # RATA-RATA CLUSTER
-            # =========================
-
-            rata_cluster = (
-                df_scaled
-                .groupby('cluster')['SKOR_CLUSTER']
-                .mean()
-                .sort_values(ascending=False)
-            )
-
-            urutan_cluster = list(
-                rata_cluster.index
-            )
-
-            # =========================
-            # MAPPING RISIKO
-            # =========================
-
-            mapping_risiko = {}
-
-            if len(urutan_cluster) == 4:
-
-                mapping_risiko[
-                    urutan_cluster[0]
-                ] = 'Tidak Berisiko'
-
-                mapping_risiko[
-                    urutan_cluster[1]
-                ] = 'Rendah'
-
-                mapping_risiko[
-                    urutan_cluster[2]
-                ] = 'Sedang'
-
-                mapping_risiko[
-                    urutan_cluster[3]
-                ] = 'Tinggi'
-
-            # =========================
-            # LABEL RISIKO
-            # =========================
-
-            df.loc[
-                df['Kelas'] == kelas,
-                'risiko'
-            ] = df.loc[
-                df['Kelas'] == kelas,
-                'cluster'
-            ].map(mapping_risiko)
+            ]
+            .mean(axis=1)
+        )
 
         # =========================
-        # RATA-RATA DBI
+        # RATA-RATA CLUSTER
         # =========================
 
-        if dbi_list:
-
-            dbi_avg = (
-                sum(dbi_list)
-                / len(dbi_list)
+        rata_cluster = (
+            df_scaled
+            .groupby('cluster')['SKOR_CLUSTER']
+            .mean()
+            .sort_values(
+                ascending=False
             )
+        )
 
-        else:
+        urutan_cluster = list(
+            rata_cluster.index
+        )
 
-            dbi_avg = 0
+        # =========================
+        # MAPPING RISIKO
+        # =========================
+
+        mapping_risiko = {
+
+            urutan_cluster[0]: 'Tidak Berisiko',
+
+            urutan_cluster[1]: 'Rendah',
+
+            urutan_cluster[2]: 'Sedang',
+
+            urutan_cluster[3]: 'Tinggi'
+
+        }
+
+        df['risiko'] = (
+            df['cluster']
+            .map(mapping_risiko)
+        )
+
+        # =========================
+        # SIMPAN EVALUASI
+        # =========================
+
+        analisis.silhouette = round(
+            silhouette,
+            4
+        )
 
         analisis.dbi = round(
-            dbi_avg,
+            dbi,
+            4
+        )
+
+        analisis.chi = round(
+            chi,
             4
         )
 
@@ -386,7 +349,7 @@ def upload_analisis(request):
                 persentase_kehadiran=row['ABSEN'],
                 skor_ekstrakurikuler=row['EKSTRAKURIKULER'],
                 cluster=row['cluster'],
-                risiko=row['risiko']
+                risiko=row['risiko'],
             )
 
         messages.success(
@@ -416,15 +379,26 @@ def hasil_analisis(request, analisis_id):
         id=analisis_id
     )
 
+    silhouette = analisis.silhouette
+
     dbi = analisis.dbi
+
+    chi = analisis.chi
 
     kelas_filter = request.GET.get(
         'kelas'
     )
 
-    data = HasilAnalisis.objects.filter(
+    # =========================
+    # DATA ANALISIS
+    # =========================
+
+    data_semua = HasilAnalisis.objects.filter(
         analisis=analisis
     )
+
+    # data yang ditampilkan
+    data = data_semua
 
     if kelas_filter:
 
@@ -561,79 +535,56 @@ def hasil_analisis(request, analisis_id):
     )
 
     # =========================
-    # BUBBLE SCATTER PLOT
+    # SCATTER DATA ASLI
     # =========================
 
-    scatter_data = []
+    scatter_asli = []
 
     for siswa in data:
 
-        warna = 'rgba(100,116,139,0.7)'
+        scatter_asli.append({
 
-        # warna berdasarkan risiko
-        if siswa.risiko == 'Tidak Berisiko':
+            'x': float(siswa.nilai_rata_rata),
 
-            warna = 'rgba(34,197,94,0.7)'
+            'y': float(siswa.persentase_kehadiran),
 
-        elif siswa.risiko == 'Rendah':
-
-            warna = 'rgba(132,204,22,0.7)'
-
-        elif siswa.risiko == 'Sedang':
-
-            warna = 'rgba(250,204,21,0.7)'
-
-        elif siswa.risiko == 'Tinggi':
-
-            warna = 'rgba(239,68,68,0.7)'
-            
-        # ukuran bubble diperkecil
-        ukuran = (
-            float(siswa.skor_ekstrakurikuler) * 2.5
-        )
-
-        scatter_data.append({
-
-            'x': float(
-                siswa.nilai_rata_rata
-            ),
-
-            'y': float(
-                siswa.persentase_kehadiran
-            ),
-
-            'r': ukuran,
+            'r': float(siswa.skor_ekstrakurikuler) * 4,
 
             'label': siswa.nama,
 
             'kelas': siswa.kelas,
 
-            'risiko': siswa.risiko,
-
             'cluster': siswa.cluster,
 
-            'ekstra': siswa.skor_ekstrakurikuler,
-
-            'backgroundColor': warna
+            'risiko': siswa.risiko
 
         })
 
-    scatter_data_json = json.dumps(
-        scatter_data
+    scatter_asli_json = json.dumps(
+        scatter_asli
     )
 
     # =========================
     # DENDROGRAM
     # =========================
 
-    fitur_dendrogram = list(
+    fitur_dendrogram = np.array(
 
-        data.values_list(
-            'nilai_rata_rata',
-            'persentase_kehadiran',
-            'skor_ekstrakurikuler'
+        list(
+
+            data_semua.values_list(
+                'nilai_rata_rata',
+                'persentase_kehadiran'
+            )
+
         )
 
+    )
+
+    scaler = MinMaxScaler()
+
+    fitur_dendrogram = scaler.fit_transform(
+        fitur_dendrogram
     )
 
     linked = linkage(
@@ -641,15 +592,22 @@ def hasil_analisis(request, analisis_id):
         method='ward'
     )
 
-    plt.figure(
-        figsize=(10, 5)
-    )
+    plt.figure(figsize=(14,6))
 
     dendrogram(
+
         linked,
+
         truncate_mode='lastp',
-        p=20
+
+        p=30,
+
+        leaf_rotation=90,
+
+        leaf_font_size=8
+
     )
+
 
     plt.title(
         'Dendrogram Agglomerative Hierarchical Clustering'
@@ -662,6 +620,8 @@ def hasil_analisis(request, analisis_id):
     plt.ylabel(
         'Jarak Euclidean'
     )
+    
+    plt.tight_layout()
 
     buffer = io.BytesIO()
 
@@ -774,9 +734,11 @@ def hasil_analisis(request, analisis_id):
             'label_chart': label_chart_json,
             'data_chart': data_chart_json,
             'warna_chart': warna_chart_json,
-            'scatter_data': scatter_data_json,
+            'scatter_asli': scatter_asli_json,
             'grafik_dendrogram': grafik_dendrogram,
+            'silhouette': silhouette,
             'dbi': dbi,
+            'chi': chi,
             'insight_dashboard': insight_dashboard,
         }
     )

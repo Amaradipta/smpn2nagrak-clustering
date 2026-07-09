@@ -37,7 +37,7 @@
         </div>
 
         <p class="text-muted mb-0">
-            Hasil clustering siswa menggunakan metode Agglomerative Hierarchical Clustering
+            Hasil clustering siswa menggunakan metode Agglomerative Hierarchical Clustering berdasarkan nilai akademik dan tingkat kehadiran.
         </p>
     </div>
 
@@ -46,7 +46,7 @@
 <!-- INSIGHT DASHBOARD -->
 {% if insight_dashboard %}
 
-<div class="alert alert-info mb-4">
+<div class="alert alert-info mb-3">
 
     <strong>
         Insight Analisis:
@@ -58,24 +58,91 @@
 
 {% endif %}
 
-<!-- DBI -->
-<div class="card card-modern shadow-sm border-0 p-4 mb-4 text-center">
+<!-- INFORMASI METODOLOGI -->
+<div class="alert alert-secondary border mb-4">
 
-    <h5 class="mb-2">
-        Evaluasi Clustering
-    </h5>
+    <strong>
+        Informasi Analisis:
+    </strong>
 
-    <p class="mb-0 text-muted">
-        Nilai Davies-Bouldin Index (DBI)
-    </p>
+    <br>
 
-    <h2 class="fw-bold mt-2 text-primary">
-        {{ dbi }}
-    </h2>
+    Proses clustering dilakukan menggunakan
+    <strong>nilai akademik</strong> dan
+    <strong>tingkat kehadiran</strong> sebagai
+    variabel utama. Data
+    <strong>keaktifan ekstrakurikuler</strong>
+    digunakan sebagai informasi pendukung dalam
+    analisis karakteristik setiap cluster yang
+    terbentuk.
 
-    <small class="text-muted">
-        Semakin kecil nilai DBI maka kualitas cluster semakin baik.
-    </small>
+</div>
+
+<!-- EVALUASI CLUSTERING -->
+<div class="row mb-4">
+
+    <!-- SILHOUETTE -->
+    <div class="col-md-4 mb-3">
+
+        <div class="card card-modern shadow-sm border-0 p-4 text-center h-100">
+
+            <h6 class="text-muted">
+                Silhouette Score
+            </h6>
+
+            <h2 class="fw-bold text-primary">
+                {{ analisis.silhouette }}
+            </h2>
+
+            <small class="text-muted">
+                Semakin besar nilai silhouette maka kualitas cluster semakin baik.
+            </small>
+
+        </div>
+
+    </div>
+
+    <!-- DBI -->
+    <div class="col-md-4 mb-3">
+
+        <div class="card card-modern shadow-sm border-0 p-4 text-center h-100">
+
+            <h6 class="text-muted">
+                Davies-Bouldin Index
+            </h6>
+
+            <h2 class="fw-bold text-success">
+                {{ analisis.dbi }}
+            </h2>
+
+            <small class="text-muted">
+                Semakin kecil nilai DBI maka kualitas cluster semakin baik.
+            </small>
+
+        </div>
+
+    </div>
+
+    <!-- CHI -->
+    <div class="col-md-4 mb-3">
+
+        <div class="card card-modern shadow-sm border-0 p-4 text-center h-100">
+
+            <h6 class="text-muted">
+                Calinski-Harabasz Index
+            </h6>
+
+            <h2 class="fw-bold text-warning">
+                {{ analisis.chi }}
+            </h2>
+
+            <small class="text-muted">
+                Semakin besar nilai CHI maka kualitas cluster semakin baik.
+            </small>
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -290,72 +357,26 @@
 <!-- SCATTER PLOT -->
 <div class="card card-modern shadow-sm border-0 p-4 mb-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-start mb-4 w-100">
 
         <div>
-
+    
             <h5 class="mb-1">
-                Scatter Plot Clustering
+                Visualisasi Data Siswa
             </h5>
-
+            
             <small class="text-muted">
-                Visualisasi distribusi siswa berdasarkan nilai rata-rata dan kehadiran
+                Visualisasi persebaran siswa berdasarkan nilai akademik dan tingkat kehadiran. Ukuran bubble merepresentasikan tingkat keaktifan ekstrakurikuler sebagai informasi pendukung.
             </small>
-
+    
         </div>
-
+    
     </div>
 
-    <canvas id="scatterChart" height="100"></canvas>
     
-    <div class="mt-4">
+    <div style="height: 500px;">
 
-        <div class="row text-center">
-    
-            <div class="col-md-3">
-    
-                <span class="badge bg-success">
-                    Tidak Berisiko
-                </span>
-    
-            </div>
-    
-            <div class="col-md-3">
-    
-                <span
-                    class="badge text-dark"
-                    style="background-color: #84cc16;"
-                >
-                    Risiko Rendah
-                </span>
-    
-            </div>
-    
-            <div class="col-md-3">
-    
-                <span class="badge bg-warning text-dark">
-                    Risiko Sedang
-                </span>
-    
-            </div>
-    
-            <div class="col-md-3">
-    
-                <span class="badge bg-danger">
-                    Risiko Tinggi
-                </span>
-    
-            </div>
-    
-        </div>
-    
-        <small class="text-muted d-block mt-3">
-    
-            Sumbu X = AVG |
-            Sumbu Y = ABSEN |
-            Ukuran Bubble = EKSTRAKURIKULER
-    
-        </small>
+        <canvas id="scatterChart"></canvas>
     
     </div>
 
@@ -529,7 +550,7 @@
                 </h5>
 
                 <small class="text-muted">
-                    Data hasil pengelompokan siswa
+                    Data hasil pengelompokan siswa berdasarkan hasil clustering
                 </small>
 
             </div>
@@ -581,9 +602,25 @@
                             <td>{{ s.nis }}</td>
                             <td>{{ s.nama }}</td>
                             <td>{{ s.kelas }}</td>
-                            <td>{{ s.nilai_rata_rata }}</td>
-                            <td>{{ s.persentase_kehadiran }}</td>
-                            <td>{{ s.skor_ekstrakurikuler }}</td>
+                            <td>{{ s.nilai_rata_rata|floatformat:2 }}</td>
+                            <td>{{ s.persentase_kehadiran|floatformat:2 }}</td>
+                            <td>
+
+                                {% if s.skor_ekstrakurikuler == 1 %}
+                            
+                                    Tidak Mengikuti
+                            
+                                {% elif s.skor_ekstrakurikuler == 2 %}
+                            
+                                    Kurang Aktif
+                            
+                                {% elif s.skor_ekstrakurikuler == 3 %}
+                            
+                                    Aktif
+                            
+                                {% endif %}
+                            
+                            </td>
 
                             <td>
 
@@ -702,9 +739,25 @@ new Chart(ctx, {
 <!-- SCATTER PLOT -->
 <script>
 
-    const scatterData = {{ scatter_data|safe }};
+    const scatterData = {{ scatter_asli|safe }};
     
     const scatterCtx = document.getElementById('scatterChart');
+    
+    const tidakBerisiko = scatterData.filter(
+        item => item.risiko === 'Tidak Berisiko'
+    );
+    
+    const rendah = scatterData.filter(
+        item => item.risiko === 'Rendah'
+    );
+    
+    const sedang = scatterData.filter(
+        item => item.risiko === 'Sedang'
+    );
+    
+    const tinggi = scatterData.filter(
+        item => item.risiko === 'Tinggi'
+    );
     
     new Chart(scatterCtx, {
     
@@ -712,27 +765,37 @@ new Chart(ctx, {
     
         data: {
     
-            datasets: [{
+            datasets: [
     
-                label: 'Distribusi Siswa',
-    
-                data: scatterData,
-    
-                parsing: {
-    
-                    xAxisKey: 'x',
-    
-                    yAxisKey: 'y'
-    
+                {
+                    label: 'Tidak Berisiko',
+                    data: tidakBerisiko,
+                    backgroundColor: '#16a34a',
+                    borderColor: '#000'
                 },
     
-                backgroundColor: scatterData.map(
-                    item => item.backgroundColor
-                ),
+                {
+                    label: 'Risiko Rendah',
+                    data: rendah,
+                    backgroundColor: '#84cc16',
+                    borderColor: '#000'
+                },
     
-                borderWidth: 1
+                {
+                    label: 'Risiko Sedang',
+                    data: sedang,
+                    backgroundColor: '#facc15',
+                    borderColor: '#000'
+                },
     
-            }]
+                {
+                    label: 'Risiko Tinggi',
+                    data: tinggi,
+                    backgroundColor: '#ef4444',
+                    borderColor: '#000'
+                }
+    
+            ]
     
         },
     
@@ -740,12 +803,12 @@ new Chart(ctx, {
     
             responsive: true,
     
+            maintainAspectRatio: false,
+    
             plugins: {
     
                 legend: {
-    
-                    display: false
-    
+                    position: 'bottom'
                 },
     
                 tooltip: {
@@ -757,21 +820,19 @@ new Chart(ctx, {
                             const item = context.raw;
     
                             return [
-    
-                                'Nama: ' + item.label,
-    
-                                'Kelas: ' + item.kelas,
-    
-                                'Cluster: ' + item.cluster,
-    
-                                'Risiko: ' + item.risiko,
-    
-                                'AVG: ' + item.x,
-    
-                                'ABSEN: ' + item.y,
-    
-                                'EKSTRAKURIKULER: ' + item.ekstra
-    
+
+                            'Nama : ' + item.label,
+
+                            'Kelas : ' + item.kelas,
+
+                            'Nilai : ' + item.x,
+
+                            'Kehadiran : ' + item.y + '%',
+
+                            'Ekstrakurikuler : ' + item.r,
+
+                            'Risiko : ' + item.risiko
+
                             ];
     
                         }
@@ -790,7 +851,7 @@ new Chart(ctx, {
     
                         display: true,
     
-                        text: 'Nilai Rata-Rata (AVG)'
+                        text: 'Nilai Rata-rata'
     
                     }
     

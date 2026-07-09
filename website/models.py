@@ -43,9 +43,23 @@ class Analisis(models.Model):
         auto_now_add=True
     )
 
+    silhouette = models.FloatField(
+        null=True,
+        blank=True
+    )
+
+    chi = models.FloatField(
+        null=True,
+        blank=True
+    )
+
     dbi = models.FloatField(
         null=True,
         blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
     )
 
     class Meta:
@@ -62,22 +76,41 @@ class Analisis(models.Model):
 
 
 class HasilAnalisis(models.Model):
-    analisis = models.ForeignKey(Analisis, on_delete=models.CASCADE)
+
+    analisis = models.ForeignKey(
+        Analisis,
+        on_delete=models.CASCADE
+    )
 
     nis = models.CharField(max_length=50)
+
     nama = models.CharField(max_length=200)
+
     kelas = models.CharField(max_length=20)
 
     nilai_rata_rata = models.FloatField()
+
     persentase_kehadiran = models.FloatField()
+
     skor_ekstrakurikuler = models.IntegerField()
 
-    cluster = models.IntegerField(null=True, blank=True)
-    risiko = models.CharField(max_length=50, null=True, blank=True)
+    cluster = models.IntegerField(
+        null=True,
+        blank=True
+    )
+
+    risiko = models.CharField(
+        max_length=50,
+        null=True,
+        blank=True
+    )
 
     class Meta:
+
         verbose_name = "Hasil Analisis Siswa"
+
         verbose_name_plural = "Hasil Analisis Siswa"
 
     def __str__(self):
+
         return f"{self.nama} ({self.kelas})"
