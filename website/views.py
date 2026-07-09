@@ -17,8 +17,12 @@ from sklearn.metrics import (
     calinski_harabasz_score
 )
 
+import os
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
+
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 
